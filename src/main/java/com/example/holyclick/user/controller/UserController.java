@@ -15,7 +15,6 @@ public class UserController {
     @PostMapping(path="/add")
     public @ResponseBody String addNewUser (@RequestParam String name) {
 
-
         User n = new User();
         n.setName(name);
         userRepository.save(n);
