@@ -1,5 +1,6 @@
 package com.example.holyclick.persona.model;
 
+import com.example.holyclick.user.model.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,4 +18,8 @@ public class Rector {
     private String name;
 
     private String surname;
+
+    @ManyToOne
+    @JoinColumn(name = "user", referencedColumnName = "id")
+    private User userId;
 }
