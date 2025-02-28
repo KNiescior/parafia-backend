@@ -39,4 +39,16 @@ public class PersonaControllerExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(ErrorResponseCode.INVALID_PERSONA_TYPE, e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
+
+    @ExceptionHandler(UnauthorizedPersonaException.class)
+    public ResponseEntity<Object> handleUnauthorizedPersonaException(UnauthorizedPersonaException e) {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorResponseCode.UNAUTHORIZED_PERSONA, e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Object> handleIllegalStateException(IllegalStateException e) {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorResponseCode.UNAUTHORIZED_PERSONA, e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
 } 

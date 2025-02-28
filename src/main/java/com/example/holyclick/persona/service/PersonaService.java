@@ -134,13 +134,14 @@ public class PersonaService {
     @Transactional
     public void setActivePersona(User user, ActivePersonaDTO activePersonaDTO) {
         // Verify persona exists and belongs to user
-        switch (activePersonaDTO.getType()) {
+        Object persona = switch (activePersonaDTO.getType()) {
             case PARISHIONER -> {
                 Parishioner parishioner = parishionerRepository.findById(activePersonaDTO.getPersonaId())
                         .orElseThrow(() -> new PersonaNotFoundException("Parishioner not found"));
                 if (!parishioner.getUserId().equals(user)) {
                     throw new PersonaNotBelongToUserException("Parishioner does not belong to user");
                 }
+                yield parishioner;
             }
             case RECTOR -> {
                 Rector rector = rectorRepository.findById(activePersonaDTO.getPersonaId())
@@ -148,19 +149,38 @@ public class PersonaService {
                 if (!rector.getUserId().equals(user)) {
                     throw new PersonaNotBelongToUserException("Rector does not belong to user");
                 }
+                yield rector;
             }
             default -> throw new InvalidPersonaTypeException("Invalid persona type");
-        }
+        };
 
-        // Get or create active persona
-        ActivePersona activePersona = activePersonaRepository.findByUser(user)
-                .orElse(new ActivePersona());
+        // Get current active persona
+        Optional<ActivePersona> currentActivePersona = activePersonaRepository.findByUser(user);
         
-        activePersona.setUser(user);
-        activePersona.setPersonaId(activePersonaDTO.getPersonaId());
-        activePersona.setType(activePersonaDTO.getType());
-        
-        activePersonaRepository.save(activePersona);
+        // If there's an active persona and it's different from the requested one
+        if (currentActivePersona.isPresent()) {
+            ActivePersona active = currentActivePersona.get();
+            if (!active.getPersonaId().equals(activePersonaDTO.getPersonaId()) || 
+                active.getType() != activePersonaDTO.getType()) {
+                // Delete the current active persona
+                activePersonaRepository.delete(active);
+                
+                // Create new active persona
+                ActivePersona newActivePersona = new ActivePersona();
+                newActivePersona.setUser(user);
+                newActivePersona.setPersonaId(activePersonaDTO.getPersonaId());
+                newActivePersona.setType(activePersonaDTO.getType());
+                activePersonaRepository.save(newActivePersona);
+            }
+            // If it's the same persona, do nothing (avoid unnecessary updates)
+        } else {
+            // If no active persona exists, create new one
+            ActivePersona newActivePersona = new ActivePersona();
+            newActivePersona.setUser(user);
+            newActivePersona.setPersonaId(activePersonaDTO.getPersonaId());
+            newActivePersona.setType(activePersonaDTO.getType());
+            activePersonaRepository.save(newActivePersona);
+        }
     }
 
     public Object getActivePersona(User user) {
