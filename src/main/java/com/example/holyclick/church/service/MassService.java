@@ -82,6 +82,21 @@ public class MassService {
     }
 
     @Transactional
+    public Mass getMassById(Integer massId, Integer rectorId) {
+        log.info("Fetching mass ID: {} for rector ID: {}", massId, rectorId);
+        
+        Mass mass = massRepository.findById(massId)
+                .orElseThrow(() -> new MassNotFoundException("Mass not found"));
+
+        // Verify mass belongs to rector's parish
+        if (!mass.getChurchId().getParishId().getRectorId().getId().equals(rectorId)) {
+            throw new ChurchNotBelongToParishException("Mass does not belong to this rector's parish");
+        }
+
+        return mass;
+    }
+
+    @Transactional
     public void deleteMass(Integer massId, Integer rectorId) {
         log.info("Deleting mass ID: {} by rector ID: {}", massId, rectorId);
         

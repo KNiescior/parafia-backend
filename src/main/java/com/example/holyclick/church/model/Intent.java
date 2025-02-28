@@ -2,29 +2,24 @@ package com.example.holyclick.church.model;
 
 import com.example.holyclick.persona.model.Parishioner;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-import java.util.Date;
-
+@Data
 @Entity
-@Getter
-@Setter
+@Table(name = "intents")
 public class Intent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "Parishioner", referencedColumnName = "id")
-    private Parishioner parishionerId;
-
-    @ManyToOne
-    @JoinColumn(name = "Mass", referencedColumnName = "id")
-    private Mass massId;
-
+    @Column(nullable = false)
     private String description;
 
-    private Date date;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mass_id", nullable = false)
+    private Mass mass;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parishioner_id", nullable = false)
+    private Parishioner parishioner;
 }
