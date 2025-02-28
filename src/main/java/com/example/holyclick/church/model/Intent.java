@@ -12,7 +12,7 @@ import java.util.Date;
 @Setter
 public class Intent {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Integer id;
 
