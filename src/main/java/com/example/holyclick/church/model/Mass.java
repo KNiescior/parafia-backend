@@ -1,25 +1,28 @@
 package com.example.holyclick.church.model;
 
+import com.example.holyclick.model.Weekday;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
+@Data
 @Entity
-@Getter
-@Setter
+@Table(name = "masses")
 public class Mass {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "Church", referencedColumnName = "id")
-    private Church churchId;
-
-    private Weekday weekday;
-
+    @Column(nullable = false)
     private String time;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Weekday weekday;
+
+    @Column(nullable = false)
     private Integer intentAmount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "church_id", nullable = false)
+    private Church churchId;
 }

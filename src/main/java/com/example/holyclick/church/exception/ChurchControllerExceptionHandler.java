@@ -12,28 +12,33 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ChurchControllerExceptionHandler {
 
     @ExceptionHandler(ChurchNotFoundException.class)
-    public ResponseEntity<Object> handleChurchNotFoundException(ChurchNotFoundException e) {
-        ErrorResponse errorResponse = new ErrorResponse(ErrorResponseCode.CHURCH_NOT_FOUND, e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    public ResponseEntity<ErrorResponse> handleChurchNotFoundException(ChurchNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorResponseCode.CHURCH_NOT_FOUND, ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ChurchNotBelongToParishException.class)
-    public ResponseEntity<Object> handleChurchNotBelongToParishException(ChurchNotBelongToParishException e) {
-        ErrorResponse errorResponse = new ErrorResponse(ErrorResponseCode.CHURCH_NOT_BELONG_TO_PARISH, e.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    public ResponseEntity<ErrorResponse> handleChurchNotBelongToParishException(ChurchNotBelongToParishException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorResponseCode.CHURCH_NOT_BELONG_TO_PARISH, ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(ParishNotFoundException.class)
-    public ResponseEntity<Object> handleParishNotFoundException(ParishNotFoundException e) {
-        ErrorResponse errorResponse = new ErrorResponse(ErrorResponseCode.PARISH_NOT_FOUND, e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    public ResponseEntity<ErrorResponse> handleParishNotFoundException(ParishNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorResponseCode.PARISH_NOT_FOUND, ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MassNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleMassNotFoundException(MassNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorResponseCode.MASS_NOT_FOUND, ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UnauthorizedPersonaException.class)
-    public ResponseEntity<Object> handleUnauthorizedPersonaException(UnauthorizedPersonaException e) {
-        ErrorResponse errorResponse = new ErrorResponse(ErrorResponseCode.UNAUTHORIZED_PERSONA, 
-            "Only RECTOR persona can manage churches. " + e.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    public ResponseEntity<ErrorResponse> handleUnauthorizedPersonaException(UnauthorizedPersonaException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorResponseCode.UNAUTHORIZED_PERSONA, ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(IllegalStateException.class)
