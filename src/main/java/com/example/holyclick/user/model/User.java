@@ -1,5 +1,6 @@
 package com.example.holyclick.user.model;
 
+import com.example.holyclick.persona.model.PersonaType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

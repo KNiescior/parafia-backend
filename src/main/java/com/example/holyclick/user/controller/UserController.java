@@ -49,11 +49,7 @@ public class UserController {
 
     @GetMapping("/login")
     public @ResponseBody UserLoginResponse loginUser(@RequestParam String name, @RequestParam String password) {
-        User user = userRepository.getUserByUsername(name);
-
-        if (user == null) {
-            throw new UsernameNotExistException("Bad credentials");
-        }
+        User user = userRepository.findByUsername(name).orElseThrow(() -> new UsernameNotExistException("Bad credentials"));
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new WrongPasswordException("Bad credentials");
         }
