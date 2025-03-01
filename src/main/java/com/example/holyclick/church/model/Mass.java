@@ -24,5 +24,5 @@ public class Mass {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "church_id", nullable = false)
-    private Church churchId;
+    private Church church;
 }

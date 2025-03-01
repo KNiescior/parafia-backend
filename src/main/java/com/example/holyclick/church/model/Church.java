@@ -1,27 +1,27 @@
 package com.example.holyclick.church.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
+@Data
 @Entity
-@Getter
-@Setter
+@Table(name = "churches")
 public class Church {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Integer id;
 
+    @Column(nullable = false)
     private String name;
 
-    @OneToOne
-    @JoinColumn(name = "Address" , referencedColumnName = "id")
-    private Address addressId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id", nullable = false)
+    private Address address;
 
-    @ManyToOne
-    @JoinColumn(name = "Parish", referencedColumnName = "id")
-    private Parish parishId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parish_id", nullable = false)
+    private Parish parish;
 
+    @Column(nullable = false)
     private Integer massAmount;
 }

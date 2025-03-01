@@ -17,6 +17,6 @@ public class Parish {
     private String name;
 
     @OneToOne
-    @JoinColumn(name = "Rector", referencedColumnName = "id")
-    private Rector rectorId;
+    @JoinColumn(name = "rector_id", referencedColumnName = "id")
+    private Rector rector;
 }

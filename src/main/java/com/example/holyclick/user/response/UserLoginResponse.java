@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public class UserLoginResponse {
 
-    public HttpStatus status;
-    public String message;
+    private HttpStatus status;
+    private String token;
+    private String role;
 }

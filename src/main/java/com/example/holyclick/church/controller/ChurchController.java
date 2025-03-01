@@ -16,10 +16,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/church")
+@RequestMapping("/api/v1/rector/church")
 @RequiredArgsConstructor
 public class ChurchController {
 
@@ -87,10 +88,10 @@ public class ChurchController {
         ChurchResponseDTO dto = new ChurchResponseDTO();
         dto.setId(church.getId());
         dto.setName(church.getName());
-        dto.setStreet(church.getAddressId().getStreet());
-        dto.setNumber(church.getAddressId().getNumber());
-        dto.setCity(church.getAddressId().getCity());
-        dto.setPostalCode(church.getAddressId().getPostalCode());
+        dto.setStreet(church.getAddress().getStreet());
+        dto.setNumber(church.getAddress().getNumber());
+        dto.setCity(church.getAddress().getCity());
+        dto.setPostalCode(church.getAddress().getPostalCode());
         dto.setMassAmount(church.getMassAmount());
         return dto;
     }

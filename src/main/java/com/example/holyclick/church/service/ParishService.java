@@ -1,6 +1,7 @@
 package com.example.holyclick.church.service;
 
 import com.example.holyclick.church.dto.ParishDTO;
+import com.example.holyclick.church.dto.ParishListItemDTO;
 import com.example.holyclick.church.exception.ParishAlreadyExistsException;
 import com.example.holyclick.church.model.Parish;
 import com.example.holyclick.church.repository.ParishRepository;
@@ -12,6 +13,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,7 +41,7 @@ public class ParishService {
 
         Parish parish = new Parish();
         parish.setName(parishDTO.getName());
-        parish.setRectorId(rector);
+        parish.setRector(rector);
 
         Parish savedParish = parishRepository.save(parish);
         log.info("Successfully created parish with ID: {} for rector ID: {}", savedParish.getId(), rectorId);
@@ -56,5 +60,24 @@ public class ParishService {
     public Parish getParishByRectorId(Integer rectorId) {
         return parishRepository.findByRectorId_Id(rectorId)
                 .orElseThrow(() -> new IllegalArgumentException("Parish not found for this rector"));
+    }
+
+    public List<ParishListItemDTO> getAllParishes() {
+        return parishRepository.findAll().stream()
+                .map(this::mapToListItemDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ParishListItemDTO> searchParishes(String query) {
+        return parishRepository.findByNameContainingIgnoreCase(query).stream()
+                .map(this::mapToListItemDTO)
+                .collect(Collectors.toList());
+    }
+
+    private ParishListItemDTO mapToListItemDTO(Parish parish) {
+        ParishListItemDTO dto = new ParishListItemDTO();
+        dto.setId(parish.getId());
+        dto.setName(parish.getName());
+        return dto;
     }
 } 

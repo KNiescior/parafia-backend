@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface IntentRepository extends JpaRepository<Intent, Integer> {
     List<Intent> findAllByMass(Mass mass);
+    long countByMass(Mass mass);
 } 

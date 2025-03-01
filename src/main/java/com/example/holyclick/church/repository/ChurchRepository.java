@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface ChurchRepository extends JpaRepository<Church, Integer> {
-    List<Church> findAllByParishId(Parish parish);
+    List<Church> findAllByParish(Parish parish);
 } 

@@ -31,7 +31,7 @@ public class MassService {
                 .orElseThrow(() -> new ChurchNotFoundException("Church not found"));
 
         // Verify church belongs to rector's parish
-        if (!church.getParishId().getRectorId().getId().equals(rectorId)) {
+        if (!church.getParish().getRector().getId().equals(rectorId)) {
             throw new ChurchNotBelongToParishException("Church does not belong to this rector's parish");
         }
 
@@ -39,7 +39,7 @@ public class MassService {
         mass.setTime(massDTO.getTime());
         mass.setWeekday(massDTO.getWeekday());
         mass.setIntentAmount(massDTO.getIntentAmount());
-        mass.setChurchId(church);
+        mass.setChurch(church);
 
         Mass savedMass = massRepository.save(mass);
         log.info("Created mass with ID: {} for church ID: {}", savedMass.getId(), churchId);
@@ -54,7 +54,7 @@ public class MassService {
                 .orElseThrow(() -> new MassNotFoundException("Mass not found"));
 
         // Verify mass belongs to rector's parish
-        if (!mass.getChurchId().getParishId().getRectorId().getId().equals(rectorId)) {
+        if (!mass.getChurch().getParish().getRector().getId().equals(rectorId)) {
             throw new ChurchNotBelongToParishException("Mass does not belong to this rector's parish");
         }
 
@@ -74,11 +74,11 @@ public class MassService {
                 .orElseThrow(() -> new ChurchNotFoundException("Church not found"));
 
         // Verify church belongs to rector's parish
-        if (!church.getParishId().getRectorId().getId().equals(rectorId)) {
+        if (!church.getParish().getRector().getId().equals(rectorId)) {
             throw new ChurchNotBelongToParishException("Church does not belong to this rector's parish");
         }
 
-        return massRepository.findAllByChurchId(church);
+        return massRepository.findAllByChurch(church);
     }
 
     @Transactional
@@ -89,7 +89,7 @@ public class MassService {
                 .orElseThrow(() -> new MassNotFoundException("Mass not found"));
 
         // Verify mass belongs to rector's parish
-        if (!mass.getChurchId().getParishId().getRectorId().getId().equals(rectorId)) {
+        if (!mass.getChurch().getParish().getRector().getId().equals(rectorId)) {
             throw new ChurchNotBelongToParishException("Mass does not belong to this rector's parish");
         }
 
@@ -104,7 +104,7 @@ public class MassService {
                 .orElseThrow(() -> new MassNotFoundException("Mass not found"));
 
         // Verify mass belongs to rector's parish
-        if (!mass.getChurchId().getParishId().getRectorId().getId().equals(rectorId)) {
+        if (!mass.getChurch().getParish().getRector().getId().equals(rectorId)) {
             throw new ChurchNotBelongToParishException("Mass does not belong to this rector's parish");
         }
 

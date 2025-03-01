@@ -9,5 +9,6 @@ import java.util.List;
 
 @Repository
 public interface MassRepository extends JpaRepository<Mass, Integer> {
-    List<Mass> findAllByChurchId(Church church);
+    List<Mass> findAllByChurch(Church church);
+    List<Mass> findAllByChurchIn(List<Church> churches);
 } 

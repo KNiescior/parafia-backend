@@ -44,8 +44,8 @@ public class ChurchService {
         // Create and save church
         Church church = new Church();
         church.setName(churchDTO.getName());
-        church.setAddressId(address);
-        church.setParishId(parish);
+        church.setAddress(address);
+        church.setParish(parish);
         church.setMassAmount(churchDTO.getMassAmount());
 
         Church savedChurch = churchRepository.save(church);
@@ -61,12 +61,12 @@ public class ChurchService {
                 .orElseThrow(() -> new ChurchNotFoundException("Church not found"));
 
         // Verify church belongs to rector's parish
-        if (!church.getParishId().getRectorId().getId().equals(rectorId)) {
+        if (!church.getParish().getRector().getId().equals(rectorId)) {
             throw new ChurchNotBelongToParishException("Church does not belong to this rector's parish");
         }
 
         // Update address
-        Address address = church.getAddressId();
+        Address address = church.getAddress();
         address.setStreet(churchDTO.getStreet());
         address.setNumber(churchDTO.getNumber());
         address.setCity(churchDTO.getCity());
@@ -87,7 +87,7 @@ public class ChurchService {
         Parish parish = parishRepository.findByRectorId_Id(rectorId)
                 .orElseThrow(() -> new ParishNotFoundException("Parish not found for this rector"));
         
-        return churchRepository.findAllByParishId(parish);
+        return churchRepository.findAllByParish(parish);
     }
 
     @Transactional
@@ -98,12 +98,12 @@ public class ChurchService {
                 .orElseThrow(() -> new ChurchNotFoundException("Church not found"));
 
         // Verify church belongs to rector's parish
-        if (!church.getParishId().getRectorId().getId().equals(rectorId)) {
+        if (!church.getParish().getRector().getId().equals(rectorId)) {
             throw new ChurchNotBelongToParishException("Church does not belong to this rector's parish");
         }
 
         // Delete the church and its address
-        Address address = church.getAddressId();
+        Address address = church.getAddress();
         churchRepository.delete(church);
         addressRepository.delete(address);
         
