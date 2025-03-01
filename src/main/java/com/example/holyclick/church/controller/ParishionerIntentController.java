@@ -8,7 +8,9 @@ import com.example.holyclick.church.service.ParishService;
 import com.example.holyclick.persona.annotation.RequirePersonaType;
 import com.example.holyclick.persona.model.PersonaType;
 import com.example.holyclick.persona.model.ActivePersona;
+import com.example.holyclick.persona.model.Parishioner;
 import com.example.holyclick.persona.repository.ActivePersonaRepository;
+import com.example.holyclick.persona.service.ActivePersonaService;
 import com.example.holyclick.user.model.User;
 import com.example.holyclick.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -30,6 +33,7 @@ public class ParishionerIntentController {
     private final ParishService parishService;
     private final UserRepository userRepository;
     private final ActivePersonaRepository activePersonaRepository;
+    private final ActivePersonaService activePersonaService;
 
     @GetMapping("/parishes")
     @RequirePersonaType(PersonaType.PARISHIONER)
@@ -69,13 +73,17 @@ public class ParishionerIntentController {
         User user = userRepository.getCurrentUser();
         ActivePersona activePersona = activePersonaRepository.findByUser(user)
                 .orElseThrow(() -> new IllegalStateException("No active persona found"));
+        Optional<Parishioner> parishioner = activePersonaService.getParishioner(activePersona);
+
+        if (parishioner.isEmpty()) {
+            throw new IllegalStateException("Parishioner not found");
+        }
 
         Intent intent = intentService.createIntent(
                 massId,
                 intentCreateDTO.getDescription(),
-                activePersona.getParishioner()
+                parishioner.get()
         );
-        
         return ResponseEntity.ok(mapToResponseDTO(intent));
     }
 
@@ -86,22 +94,13 @@ public class ParishionerIntentController {
         
         // Parishioner info
         dto.setParishionerId(intent.getParishioner().getId());
-        dto.setParishionerFirstName(intent.getParishioner().getName());
-        dto.setParishionerLastName(intent.getParishioner().getSurname());
+        dto.setParishionerName(intent.getParishioner().getName());
+        dto.setParishionerSurname(intent.getParishioner().getSurname());
         
         // Mass info
         dto.setMassId(intent.getMass().getId());
         dto.setMassTime(intent.getMass().getTime());
         dto.setMassWeekday(intent.getMass().getWeekday().toString());
-        
-        // Church info
-        dto.setChurchId(intent.getMass().getChurch().getId());
-        dto.setChurchName(intent.getMass().getChurch().getName());
-        Address address = intent.getMass().getChurch().getAddress();
-        dto.setChurchStreet(address.getStreet());
-        dto.setChurchHouseNumber(address.getNumber());
-        dto.setChurchPostalCode(address.getPostalCode());
-        dto.setChurchCity(address.getCity());
         
         return dto;
     }

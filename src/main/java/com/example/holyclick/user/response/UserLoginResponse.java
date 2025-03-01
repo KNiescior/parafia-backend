@@ -12,5 +12,4 @@ public class UserLoginResponse {
 
     private HttpStatus status;
     private String token;
-    private String role;
 }

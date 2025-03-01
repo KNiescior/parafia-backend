@@ -21,4 +21,5 @@ public class ActivePersona {
     
     @Enumerated(EnumType.STRING)
     private PersonaType type;
+
 } 

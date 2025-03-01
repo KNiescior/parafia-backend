@@ -94,8 +94,8 @@ public class MassController {
         dto.setTime(mass.getTime());
         dto.setWeekday(mass.getWeekday());
         dto.setIntentAmount(mass.getIntentAmount());
-        dto.setChurchId(mass.getChurchId().getId());
-        dto.setChurchName(mass.getChurchId().getName());
+        dto.setChurchId(mass.getChurch().getId());
+        dto.setChurchName(mass.getChurch().getName());
         return dto;
     }
 } 

@@ -52,21 +52,11 @@ public class IntentController {
         dto.setId(intent.getId());
         dto.setDescription(intent.getDescription());
         dto.setParishionerId(intent.getParishioner().getId());
-        dto.setParishionerFirstName(intent.getParishioner().getName());
-        dto.setParishionerLastName(intent.getParishioner().getSurname());
+        dto.setParishionerName(intent.getParishioner().getName());
+        dto.setParishionerSurname(intent.getParishioner().getSurname());
         dto.setMassId(intent.getMass().getId());
         dto.setMassTime(intent.getMass().getTime());
         dto.setMassWeekday(intent.getMass().getWeekday().toString());
-        
-        // Add church info
-        dto.setChurchId(intent.getMass().getChurch().getId());
-        dto.setChurchName(intent.getMass().getChurch().getName());
-        dto.setChurchStreet(intent.getMass().getChurch().getAddress().getStreet());
-        dto.setChurchHouseNumber(intent.getMass().getChurch().getAddress().getNumber());
-        dto.setChurchApartmentNumber(null); // Address doesn't have apartment number
-        dto.setChurchPostalCode(intent.getMass().getChurch().getAddress().getPostalCode());
-        dto.setChurchCity(intent.getMass().getChurch().getAddress().getCity());
-        
         return dto;
     }
 } 
