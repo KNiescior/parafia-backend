@@ -1,6 +1,7 @@
 package com.example.holyclick.user.controller;
 
 import com.example.holyclick.JwtUtil;
+import com.example.holyclick.persona.service.PersonaService;
 import com.example.holyclick.user.exception.*;
 import com.example.holyclick.user.model.User;
 import com.example.holyclick.user.repository.UserRepository;
@@ -27,6 +28,9 @@ public class UserController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private PersonaService personaService;
 
     @PostMapping("/register")
     public @ResponseBody UserRegisterResponse registerUser(@RequestBody RegisterRequest registerRequest) {
@@ -58,8 +62,15 @@ public class UserController {
 
         String jwtToken = jwtUtil.generateToken(user.getUsername());
 
+        Object activePersona = personaService.getActivePersona(user);
 
-        return new UserLoginResponse(HttpStatus.OK, jwtToken);
+        String role = "USER";
+        
+        if (activePersona != null) {
+            role = activePersona.getClass().getSimpleName();
+        }
+
+        return new UserLoginResponse(HttpStatus.OK, jwtToken, role);
     }
 
     private void saveUserIntoDatabase(String name, String password) {
