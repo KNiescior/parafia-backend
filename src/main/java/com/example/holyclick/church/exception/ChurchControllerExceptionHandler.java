@@ -35,6 +35,12 @@ public class ChurchControllerExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(MassLimitExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMassLimitExceededException(MassLimitExceededException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorResponseCode.MASS_LIMIT_EXCEEDED, ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(UnauthorizedPersonaException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorizedPersonaException(UnauthorizedPersonaException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ErrorResponseCode.UNAUTHORIZED_PERSONA, ex.getMessage());

@@ -20,7 +20,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/mass")
+@RequestMapping("/api/v1/rector/mass")
 @RequiredArgsConstructor
 public class MassController {
 

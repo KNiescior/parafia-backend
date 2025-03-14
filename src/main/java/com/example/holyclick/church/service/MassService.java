@@ -4,6 +4,7 @@ import com.example.holyclick.church.dto.MassDTO;
 import com.example.holyclick.church.exception.ChurchNotBelongToParishException;
 import com.example.holyclick.church.exception.ChurchNotFoundException;
 import com.example.holyclick.church.exception.MassNotFoundException;
+import com.example.holyclick.church.exception.MassLimitExceededException;
 import com.example.holyclick.church.model.Church;
 import com.example.holyclick.church.model.Mass;
 import com.example.holyclick.church.repository.ChurchRepository;
@@ -33,6 +34,19 @@ public class MassService {
         // Verify church belongs to rector's parish
         if (!church.getParish().getRector().getId().equals(rectorId)) {
             throw new ChurchNotBelongToParishException("Church does not belong to this rector's parish");
+        }
+
+        // Check mass limit for the given weekday
+        List<Mass> existingMasses = massRepository.findAllByChurch(church);
+        long massesOnWeekday = existingMasses.stream()
+                .filter(mass -> mass.getWeekday() == massDTO.getWeekday())
+                .count();
+
+        if (massesOnWeekday >= church.getMassAmount()) {
+            throw new MassLimitExceededException(
+                String.format("Church already has %d masses on %s, which is the maximum allowed", 
+                    church.getMassAmount(), massDTO.getWeekday())
+            );
         }
 
         Mass mass = new Mass();

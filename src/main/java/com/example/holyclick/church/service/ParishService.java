@@ -3,6 +3,7 @@ package com.example.holyclick.church.service;
 import com.example.holyclick.church.dto.ParishDTO;
 import com.example.holyclick.church.dto.ParishListItemDTO;
 import com.example.holyclick.church.exception.ParishAlreadyExistsException;
+import com.example.holyclick.church.exception.ParishNotFoundException;
 import com.example.holyclick.church.model.Parish;
 import com.example.holyclick.church.repository.ParishRepository;
 import com.example.holyclick.persona.model.PersonaType;
@@ -51,7 +52,7 @@ public class ParishService {
     @Transactional
     public Parish updateParish(ParishDTO parishDTO, Integer rectorId) {
         Parish parish = parishRepository.findByRectorId_Id(rectorId)
-                .orElseThrow(() -> new IllegalArgumentException("Parish not found for this rector"));
+                .orElseThrow(() -> new ParishNotFoundException("Parish not found for this rector"));
 
         parish.setName(parishDTO.getName());
         return parishRepository.save(parish);
@@ -59,7 +60,7 @@ public class ParishService {
 
     public Parish getParishByRectorId(Integer rectorId) {
         return parishRepository.findByRectorId_Id(rectorId)
-                .orElseThrow(() -> new IllegalArgumentException("Parish not found for this rector"));
+                .orElseThrow(() -> new ParishNotFoundException("Parish not found for this rector"));
     }
 
     public List<ParishListItemDTO> getAllParishes() {

@@ -64,10 +64,25 @@ public class UserController {
 
         Object activePersona = personaService.getActivePersona(user);
 
-        String role = "USER";
+        String role = "ROLE_USER";
         
         if (activePersona != null) {
-            role = activePersona.getClass().getSimpleName();
+            role = "ROLE_" + activePersona.getClass().getSimpleName();
+        }
+
+        return new UserLoginResponse(HttpStatus.OK, jwtToken, role);
+    }
+
+    @PostMapping("/refresh-token")
+    public @ResponseBody UserLoginResponse refreshToken() {
+        User user = userRepository.getCurrentUser();
+        String jwtToken = jwtUtil.generateToken(user.getUsername());
+
+        Object activePersona = personaService.getActivePersona(user);
+        String role = "ROLE_USER";
+        
+        if (activePersona != null) {
+            role = "ROLE_" + activePersona.getClass().getSimpleName();
         }
 
         return new UserLoginResponse(HttpStatus.OK, jwtToken, role);

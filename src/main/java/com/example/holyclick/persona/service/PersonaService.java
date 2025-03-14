@@ -100,6 +100,7 @@ public class PersonaService {
 
     private ParishionerDTO convertToDTO(Parishioner parishioner) {
         ParishionerDTO dto = new ParishionerDTO();
+        dto.setId(parishioner.getId());
         dto.setName(parishioner.getName());
         dto.setSurname(parishioner.getSurname());
         dto.setPhoneNumber(parishioner.getPhoneNumber());
@@ -108,6 +109,7 @@ public class PersonaService {
 
     private RectorDTO convertToDTO(Rector rector) {
         RectorDTO dto = new RectorDTO();
+        dto.setId(rector.getId());
         dto.setName(rector.getName());
         dto.setSurname(rector.getSurname());
         return dto;

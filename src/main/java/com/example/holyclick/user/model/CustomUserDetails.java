@@ -1,5 +1,8 @@
 package com.example.holyclick.user.model;
 
+import com.example.holyclick.persona.model.ActivePersona;
+import com.example.holyclick.persona.repository.ActivePersonaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,14 +12,21 @@ import java.util.Collections;
 
 public class CustomUserDetails implements UserDetails {
     private User user;
+    private ActivePersonaRepository activePersonaRepository;
 
-    public CustomUserDetails(User user) {
+    public CustomUserDetails(User user, ActivePersonaRepository activePersonaRepository) {
         this.user = user;
+        this.activePersonaRepository = activePersonaRepository;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority("USER"));
+        String role = "ROLE_USER";
+        ActivePersona activePersona = activePersonaRepository.findByUser(user).orElse(null);
+        if (activePersona != null) {
+            role = "ROLE_" + activePersona.getType();
+        }
+        return Collections.singleton(new SimpleGrantedAuthority(role));
     }
 
     @Override
