@@ -1,7 +1,6 @@
 package com.example.holyclick.church.controller;
 
 import com.example.holyclick.church.dto.*;
-import com.example.holyclick.church.model.Address;
 import com.example.holyclick.church.model.Intent;
 import com.example.holyclick.church.service.IntentService;
 import com.example.holyclick.church.service.ParishService;
@@ -82,7 +81,8 @@ public class ParishionerIntentController {
         Intent intent = intentService.createIntent(
                 massId,
                 intentCreateDTO.getDescription(),
-                parishioner.get()
+                parishioner.get(),
+                intentCreateDTO.getDate()
         );
         return ResponseEntity.ok(mapToResponseDTO(intent));
     }
@@ -91,6 +91,7 @@ public class ParishionerIntentController {
         IntentResponseDTO dto = new IntentResponseDTO();
         dto.setId(intent.getId());
         dto.setDescription(intent.getDescription());
+        dto.setDate(intent.getDate());
         
         // Parishioner info
         dto.setParishionerId(intent.getParishioner().getId());

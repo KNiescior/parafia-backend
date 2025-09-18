@@ -72,6 +72,22 @@ public class MassService {
             throw new ChurchNotBelongToParishException("Mass does not belong to this rector's parish");
         }
 
+        // Check mass limit for the given weekday if weekday is being changed
+        if (!mass.getWeekday().equals(massDTO.getWeekday())) {
+            Church church = mass.getChurch();
+            List<Mass> existingMasses = massRepository.findAllByChurch(church);
+            long massesOnWeekday = existingMasses.stream()
+                    .filter(existingMass -> existingMass.getWeekday() == massDTO.getWeekday())
+                    .count();
+
+            if (massesOnWeekday >= church.getMassAmount()) {
+                throw new MassLimitExceededException(
+                    String.format("Church already has %d masses on %s, which is the maximum allowed", 
+                        church.getMassAmount(), massDTO.getWeekday())
+                );
+            }
+        }
+
         mass.setTime(massDTO.getTime());
         mass.setWeekday(massDTO.getWeekday());
         mass.setIntentAmount(massDTO.getIntentAmount());

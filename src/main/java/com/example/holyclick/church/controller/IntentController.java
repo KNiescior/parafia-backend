@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDate;
 
 import java.util.List;
 
@@ -31,14 +33,19 @@ public class IntentController {
 
     @GetMapping("/mass/{massId}")
     @RequirePersonaType(PersonaType.RECTOR)
-    public ResponseEntity<List<IntentResponseDTO>> getMassIntents(@PathVariable Integer massId) {
+    public ResponseEntity<List<IntentResponseDTO>> getMassIntents(
+            @PathVariable Integer massId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
         log.info("Received request to get intents for mass: {}", massId);
         User user = userRepository.getCurrentUser();
         ActivePersona activePersona = activePersonaRepository.findByUser(user)
                 .orElseThrow(() -> new IllegalStateException("No active persona found"));
 
         Mass mass = massService.getMassById(massId, activePersona.getPersonaId());
-        List<Intent> intents = intentRepository.findAllByMass(mass);
+        List<Intent> intents = (date == null)
+                ? intentRepository.findAllByMass(mass)
+                : intentRepository.findAllByMassAndDate(mass, date);
         
         List<IntentResponseDTO> intentResponses = intents.stream()
                 .map(this::mapToResponseDTO)
@@ -54,6 +61,7 @@ public class IntentController {
         dto.setParishionerId(intent.getParishioner().getId());
         dto.setParishionerName(intent.getParishioner().getName());
         dto.setParishionerSurname(intent.getParishioner().getSurname());
+        dto.setDate(intent.getDate());
         dto.setMassId(intent.getMass().getId());
         dto.setMassTime(intent.getMass().getTime());
         dto.setMassWeekday(intent.getMass().getWeekday().toString());

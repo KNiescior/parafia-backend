@@ -43,7 +43,7 @@ public class IntentService {
                 
                 List<MassTimeSlotDTO> availableMasses = masses.stream()
                     .filter(mass -> isWeekdayMatch(mass, date))
-                    .filter(mass -> hasAvailableSlots(mass))
+                    .filter(mass -> hasAvailableSlots(mass, date))
                     .map(mass -> createTimeSlotDTO(mass))
                     .collect(Collectors.toList());
                 
@@ -55,11 +55,15 @@ public class IntentService {
     }
 
     @Transactional
-    public Intent createIntent(Integer massId, String description, Parishioner parishioner) {
+    public Intent createIntent(Integer massId, String description, Parishioner parishioner, LocalDate date) {
         Mass mass = massRepository.findById(massId)
             .orElseThrow(() -> new MassNotFoundException("Mass not found"));
 
-        if (!hasAvailableSlots(mass)) {
+        if (!isWeekdayMatch(mass, date)) {
+            throw new IllegalArgumentException("Selected date does not match mass weekday");
+        }
+
+        if (!hasAvailableSlots(mass, date)) {
             throw new NoIntentSlotsAvailableException("No intent slots available for this mass");
         }
 
@@ -67,6 +71,7 @@ public class IntentService {
         intent.setMass(mass);
         intent.setDescription(description);
         intent.setParishioner(parishioner);
+        intent.setDate(date);
 
         return intentRepository.save(intent);
     }
@@ -75,8 +80,8 @@ public class IntentService {
         return mass.getWeekday().name().equals(date.getDayOfWeek().name());
     }
 
-    private boolean hasAvailableSlots(Mass mass) {
-        long currentIntents = intentRepository.countByMass(mass);
+    private boolean hasAvailableSlots(Mass mass, LocalDate date) {
+        long currentIntents = intentRepository.countByMassAndDate(mass, date);
         return currentIntents < mass.getIntentAmount();
     }
 
@@ -89,6 +94,8 @@ public class IntentService {
         Address address = mass.getChurch().getAddress();
         dto.setChurchAddress(address.getStreet() + " " + address.getNumber() + ", " + address.getPostalCode() + " " + address.getCity());
         
+        // Availability here is general, not date-specific. Caller of getMassAvailability
+        // already passes the exact date and we filtered slots above with hasAvailableSlots(mass, date).
         long currentIntents = intentRepository.countByMass(mass);
         dto.setAvailableIntentSlots((int)(mass.getIntentAmount() - currentIntents));
         
